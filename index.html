@@ -1,72 +1,72 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Para você ❤️</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Acesso</title>
 
 <style>
 :root{
   --pink1:#ff4fa3;
   --pink2:#ff77b9;
   --pink3:#ff9fd2;
-  --text:#fff;
+  --card:#ffffff22;
+  --card2:#ffffff18;
+  --text:#ffffff;
+  --shadow: 0 20px 60px rgba(0,0,0,.35);
 }
 
 *{box-sizing:border-box}
+html,body{height:100%}
+
 body{
   margin:0;
   font-family: system-ui;
-  color:var(--text);
+  color: var(--text);
   overflow:hidden;
 }
 
-/* TELAS */
 .screen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position:fixed; inset:0;
+  display:grid;
+  place-items:center;
 }
 
-/* FUNDO LOGIN */
 .bg-pink{
-  background: linear-gradient(180deg,var(--pink1),var(--pink2),var(--pink3));
+  background: linear-gradient(180deg, var(--pink1), var(--pink2), var(--pink3));
 }
 
-/* FUNDO FINAL */
 .bg-dark{
   background:#07070a;
 }
 
-/* CARD */
 .card{
-  background:#ffffff22;
-  padding:30px;
+  padding:25px;
   border-radius:20px;
-  text-align:center;
+  background: var(--card);
   backdrop-filter: blur(10px);
-}
-
-/* INPUT CONTÍNUO */
-input{
-  font-size:28px;
-  padding:12px;
-  width:200px;
-  border-radius:10px;
-  border:none;
   text-align:center;
 }
 
-/* BOTÃO */
+.code{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+
+.digit{
+  width:55px;
+  height:60px;
+  font-size:28px;
+  text-align:center;
+}
+
 button{
-  margin-top:15px;
-  padding:10px 20px;
+  margin-top:10px;
+  padding:10px;
   border:none;
   border-radius:10px;
   cursor:pointer;
-  font-weight:bold;
 }
 
 .hide{display:none}
@@ -79,18 +79,19 @@ button{
   transform:translate(-50%,-50%);
   font-size:40px;
   text-align:center;
+  z-index:20;
   color:#ff77b9;
-  z-index:10;
   text-shadow:
     0 0 10px #ff77b9,
     0 0 20px #ff4fa3,
     0 0 40px #ff4fa3;
 }
 
-/* CANVAS */
-canvas{
+/* CANVAS CORAÇÕES */
+#heartsCanvas{
   position:absolute;
   inset:0;
+  z-index:5;
 }
 </style>
 </head>
@@ -101,8 +102,14 @@ canvas{
 <div id="loginScreen" class="screen bg-pink">
   <div class="card">
     <h2>Digite a senha</h2>
-    <input id="password" maxlength="4" placeholder="****">
-    <br>
+
+    <div class="code">
+      <input class="digit" maxlength="1">
+      <input class="digit" maxlength="1">
+      <input class="digit" maxlength="1">
+      <input class="digit" maxlength="1">
+    </div>
+
     <button onclick="validate()">Entrar</button>
     <p id="status"></p>
   </div>
@@ -111,45 +118,56 @@ canvas{
 <!-- FINAL -->
 <div id="animScreen" class="screen bg-dark hide">
   <h1 id="loveText">Eu adoro você Luna ❤️ !</h1>
-  <canvas id="canvas"></canvas>
+  <canvas id="heartsCanvas"></canvas>
 </div>
 
 <script>
 const CORRECT_PASSWORD = "2603";
+const digits = document.querySelectorAll(".digit");
+
+function getCode(){
+  return [...digits].map(d=>d.value).join("");
+}
 
 function validate(){
-  const val = document.getElementById("password").value;
-
-  if(val === CORRECT_PASSWORD){
+  if(getCode() === CORRECT_PASSWORD){
     document.getElementById("loginScreen").classList.add("hide");
     document.getElementById("animScreen").classList.remove("hide");
-    startAnimation();
+    startHearts();
   }else{
     document.getElementById("status").innerText="Senha incorreta";
   }
 }
 
-/* ANIMAÇÃO CORAÇÕES */
-const canvas = document.getElementById("canvas");
+/* AUTO AVANÇAR */
+digits.forEach((d,i)=>{
+  d.addEventListener("input",()=>{
+    if(d.value && i<3) digits[i+1].focus();
+  });
+});
+
+/* CORAÇÕES */
+const canvas = document.getElementById("heartsCanvas");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let hearts = [];
+let hearts=[];
 
 function createHeart(){
   return {
     x: Math.random()*canvas.width,
     y: canvas.height + 20,
     size: Math.random()*6+2,
-    speed: Math.random()*2+1,
+    speed: Math.random()*1.5+0.5,
     alpha: Math.random()
-  }
+  };
 }
 
-function startAnimation(){
-  for(let i=0;i<200;i++){
+function startHearts(){
+  hearts=[];
+  for(let i=0;i<120;i++){
     hearts.push(createHeart());
   }
   animate();
