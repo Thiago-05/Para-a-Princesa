@@ -1,228 +1,183 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Acesso</title>
-  <style>
-    :root{
-      --pink1:#ff4fa3;
-      --pink2:#ff77b9;
-      --pink3:#ff9fd2;
-      --card:#ffffff22;
-      --card2:#ffffff18;
-      --text:#ffffff;
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para você ❤️</title>
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui;
-      color: var(--text);
-      overflow:hidden;
-    }
+<style>
+:root{
+  --pink1:#ff4fa3;
+  --pink2:#ff77b9;
+  --pink3:#ff9fd2;
+  --text:#fff;
+}
 
-    .screen{
-      position:fixed; inset:0;
-      display:grid;
-      place-items:center;
-      padding:24px;
-    }
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: system-ui;
+  color:var(--text);
+  overflow:hidden;
+}
 
-    .bg-pink{
-      background: linear-gradient(180deg, var(--pink1), var(--pink2), var(--pink3));
-    }
+/* TELAS */
+.screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .card{
-      width:min(520px, 100%);
-      border-radius: 22px;
-      padding: 26px 22px;
-      background: linear-gradient(180deg, var(--card), var(--card2));
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
-    }
+/* FUNDO LOGIN */
+.bg-pink{
+  background: linear-gradient(180deg,var(--pink1),var(--pink2),var(--pink3));
+}
 
-    .digit{
-      width:56px;
-      height:64px;
-      font-size:28px;
-      text-align:center;
-    }
+/* FUNDO FINAL */
+.bg-dark{
+  background:#07070a;
+}
 
-    button{
-      border:0;
-      cursor:pointer;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-weight: 700;
-    }
+/* CARD */
+.card{
+  background:#ffffff22;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+  backdrop-filter: blur(10px);
+}
 
-    .status{ text-align:center; margin-top:10px; }
+/* INPUT CONTÍNUO */
+input{
+  font-size:28px;
+  padding:12px;
+  width:200px;
+  border-radius:10px;
+  border:none;
+  text-align:center;
+}
 
-    .bg-dark{ background:#07070a; }
+/* BOTÃO */
+button{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
 
-    .hide{ display:none; }
+.hide{display:none}
 
-    canvas{
-      z-index:1;
-      position:relative;
-    }
+/* TEXTO CENTRAL */
+#loveText{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:40px;
+  text-align:center;
+  color:#ff77b9;
+  z-index:10;
+  text-shadow:
+    0 0 10px #ff77b9,
+    0 0 20px #ff4fa3,
+    0 0 40px #ff4fa3;
+}
 
-    #loveText{
-      position:absolute;
-      top:80px;
-      left:50%;
-      transform:translateX(-50%);
-      font-size:34px;
-      color:#ff77b9;
-      z-index:10;
-      pointer-events:none;
-      text-shadow: 0 0 10px rgba(255,105,180,.6);
-    }
-  </style>
+/* CANVAS */
+canvas{
+  position:absolute;
+  inset:0;
+}
+</style>
 </head>
 
 <body>
 
+<!-- LOGIN -->
 <div id="loginScreen" class="screen bg-pink">
   <div class="card">
     <h2>Digite a senha</h2>
-
-    <div>
-      <input class="digit" maxlength="1">
-      <input class="digit" maxlength="1">
-      <input class="digit" maxlength="1">
-      <input class="digit" maxlength="1">
-    </div>
-
+    <input id="password" maxlength="4" placeholder="****">
+    <br>
     <button onclick="validate()">Entrar</button>
-    <div id="status" class="status"></div>
+    <p id="status"></p>
   </div>
 </div>
 
+<!-- FINAL -->
 <div id="animScreen" class="screen bg-dark hide">
-  <h1 id="loveText"></h1>
+  <h1 id="loveText">Eu adoro você Luna ❤️ !</h1>
   <canvas id="canvas"></canvas>
 </div>
 
 <script>
 const CORRECT_PASSWORD = "2603";
 
-const digits = document.querySelectorAll(".digit");
-const statusEl = document.getElementById("status");
-const loginScreen = document.getElementById("loginScreen");
-const animScreen = document.getElementById("animScreen");
-
-function getCode(){
-  return [...digits].map(d => d.value).join("");
-}
-
 function validate(){
-  const code = getCode();
+  const val = document.getElementById("password").value;
 
-  if(code === CORRECT_PASSWORD){
-    statusEl.innerText = "Entrando...";
-
-    setTimeout(()=>{
-      loginScreen.classList.add("hide");
-      animScreen.classList.remove("hide");
-
-      startAnimation();
-
-      setTimeout(()=>{
-        typeText("Eu adoro você, Luna ❤️", "loveText", 80);
-      },600);
-
-    },500);
-
-  } else {
-    statusEl.innerText = "Senha incorreta";
+  if(val === CORRECT_PASSWORD){
+    document.getElementById("loginScreen").classList.add("hide");
+    document.getElementById("animScreen").classList.remove("hide");
+    startAnimation();
+  }else{
+    document.getElementById("status").innerText="Senha incorreta";
   }
 }
 
-/* TEXTO */
-function typeText(text, id, speed){
-  const el = document.getElementById(id);
-  el.textContent="";
-  let i=0;
-
-  function write(){
-    if(i<text.length){
-      el.textContent += text[i];
-      i++;
-      setTimeout(write, speed);
-    } else {
-      glow(el);
-    }
-  }
-  write();
-}
-
-function glow(el){
-  let size=10;
-  let grow=true;
-
-  setInterval(()=>{
-    if(grow){
-      size++;
-      if(size>25) grow=false;
-    } else {
-      size--;
-      if(size<10) grow=true;
-    }
-
-    el.style.textShadow = `
-      0 0 ${size}px #ff77b9,
-      0 0 ${size*2}px #ff4fa3
-    `;
-  },60);
-}
-
-/* CORAÇÃO */
+/* ANIMAÇÃO CORAÇÕES */
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let particles=[];
+let hearts = [];
 
-function heart(t){
+function createHeart(){
   return {
-    x:16*Math.pow(Math.sin(t),3),
-    y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))
+    x: Math.random()*canvas.width,
+    y: canvas.height + 20,
+    size: Math.random()*6+2,
+    speed: Math.random()*2+1,
+    alpha: Math.random()
   }
 }
 
 function startAnimation(){
-  particles=[];
-
-  for(let i=0;i<1500;i++){
-    const t=Math.random()*Math.PI*2;
-    const p=heart(t);
-
-    particles.push({
-      x:canvas.width/2 + p.x*15,
-      y:canvas.height/2 + p.y*15
-    });
+  for(let i=0;i<200;i++){
+    hearts.push(createHeart());
   }
-
-  draw();
+  animate();
 }
 
-function draw(){
+function drawHeart(x,y,size){
+  ctx.beginPath();
+  ctx.moveTo(x,y);
+  ctx.bezierCurveTo(x-size,y-size,x-2*size,y+size,x,y+2*size);
+  ctx.bezierCurveTo(x+2*size,y+size,x+size,y-size,x,y);
+  ctx.fill();
+}
+
+function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,1.5,0,Math.PI*2);
-    ctx.fillStyle="pink";
-    ctx.fill();
+  hearts.forEach(h=>{
+    h.y -= h.speed;
+
+    ctx.fillStyle = `rgba(255,105,180,${h.alpha})`;
+    drawHeart(h.x,h.y,h.size);
+
+    if(h.y < -10){
+      Object.assign(h, createHeart());
+    }
   });
 
-  requestAnimationFrame(draw);
+  requestAnimationFrame(animate);
 }
 </script>
 
